@@ -12,13 +12,15 @@ public:
 public slots:
   void slotButtonClicked();
   void funcaoteste();
-  void slotReadyRead(QNetworkReply* reply);
+  void slotReadyRead();
 
 private:
  int m_counter;
  QPushButton *m_button;
  QInputDialog *inputDialog;
  QString *inputText;
+
+
 
 };
 
