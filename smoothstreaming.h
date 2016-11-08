@@ -12,7 +12,7 @@
 #include <QObject>
 #include <QtWidgets>
 #include <QFile>
-
+#include <QTime>
 
 class SmoothStreaming : public QWidget
 {
@@ -27,6 +27,7 @@ public slots:
 
 private:
     QString  Finalurl;
+    QTime TimeAlta, TimeBaixa;
 };
 
 #endif // SMOOTHSTREAMING_H

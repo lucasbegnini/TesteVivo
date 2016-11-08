@@ -28,28 +28,77 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
 
 
     QString Bitrate = _list.at(0).toElement().attribute("Bitrate");
-    Finalurl.replace("{start time}","0");
+
     Finalurl.replace("{bitrate}",Bitrate);
     qDebug() << Finalurl;
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QNetworkRequest request;
-    request.setUrl(QUrl(Finalurl));
-    QNetworkReply *reply = manager->get(request);
-    //connect(reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead(QNetworkReply*)));
-    QEventLoop loop;
-    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
+    QByteArray data;
+    //Acumulador de tempo
+    int tempAc = 0;
+    //Loop para baixar todos os arquivos
+     TimeAlta.start();
+    for(int i = 0; i <= 10; i++)
+    {
+        if(i==0)
+        {
+         Finalurl.replace("{start time}","0");
+        }else{
+           tempAc = tempAc + listchunks.at(i-1).toElement().attribute("d").toInt();
+           QString s = QString::number(tempAc);
+         Finalurl.replace("{start time}",s);
+        }
+        request.setUrl(QUrl(Finalurl));
+        QNetworkReply *reply = manager->get(request);
+        QEventLoop loop;
+        connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+        loop.exec();
+        data = data + reply->readAll();
+         qDebug() << i;
+    }
+    float nMiliAlta = TimeAlta.elapsed();
+    //TimeAlta.
+       QFile file("C:/Users/Public/AltaQualidade.mp4");
+       file.open(QIODevice::WriteOnly);
+       file.write(data);
+       file.close();
+         qDebug() << "Done Alta Qualidade em :" << nMiliAlta/1000 << " em segundos ";
 
-    QByteArray data = reply->readAll();
+         Bitrate = _list.at(8).toElement().attribute("Bitrate");
 
- /*   QFile file("C:/Users/Public/some_name.mp4");
-    file.open(QIODevice::WriteOnly);
-    file.write(data);
-    file.close();
-     QApplication::quit();
-*/
-    //for(int i = 0; i < 10 ; i++)
-    //{}
+         Finalurl.replace("{bitrate}",Bitrate);
+          data = 0;
+         //Acumulador de tempo
+         tempAc = 0;
+         //Loop para baixar todos os arquivos
+        TimeBaixa.start();
+         for(int i = 0; i <= 10; i++)
+         {
+             if(i==0)
+             {
+              Finalurl.replace("{start time}","0");
+             }else{
+                tempAc = tempAc + listchunks.at(i-1).toElement().attribute("d").toInt();
+                QString s = QString::number(tempAc);
+              Finalurl.replace("{start time}",s);
+             }
+             request.setUrl(QUrl(Finalurl));
+             QNetworkReply *reply = manager->get(request);
+             QEventLoop loop;
+             connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+             loop.exec();
+             data = data + reply->readAll();
+              qDebug() << i;
+         }
+         float nMiliBaixa = TimeBaixa.elapsed();
+            QFile file2("C:/Users/Public/BaixaQualidade.mp4");
+            file2.open(QIODevice::WriteOnly);
+            file2.write(data);
+            file2.close();
+              qDebug() << "Done Baixa Qualidade :" << nMiliBaixa/1000 << " em segundos ";
+            //quit();
+            //return false;
+              exit(EXIT_FAILURE);
 }
 
 void SmoothStreaming::requestReceived(QNetworkReply * reply)
