@@ -9,8 +9,10 @@ QT += xml
 SOURCES += \
     window.cpp \
     main.cpp \
-    xmldown.cpp
+    xmldown.cpp \
+    smoothstreaming.cpp
 
 HEADERS += \
     window.h \
-    xmldown.h
+    xmldown.h \
+    smoothstreaming.h

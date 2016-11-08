@@ -15,9 +15,9 @@ Window::Window(QWidget *parent) :
     inputDialog = new QInputDialog(this);
     inputDialog->setOptions(QInputDialog::NoButtons);
 
-    *inputText =  inputDialog->getText(NULL ,"QInputDialog::getText() Example",
+    *inputText =  inputDialog->getText(NULL ,"Insert the Manifest adress Example",
                                           "User name:", QLineEdit::Normal,
-                                          QDir::home().dirName(), &ok);
+                                          "http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism", &ok);
     slotButtonClicked();
 
 //connect(inputDialog, SIGNAL (accepted()), this, SLOT (fucaoteste()));
@@ -29,11 +29,11 @@ void Window::funcaoteste()
 }
 void Window::slotButtonClicked()
 {
-     QString urlText = *inputText;
+     urlText = *inputText;
         qDebug() << urlText;
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QNetworkRequest request;
-    request.setUrl(QUrl("http://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/Manifest"));
+    request.setUrl(QUrl(urlText.trimmed() + "/Manifest"));
     QNetworkReply *reply = manager->get(request);
     //connect(reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead(QNetworkReply*)));
     QEventLoop loop;
