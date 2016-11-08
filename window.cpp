@@ -1,11 +1,12 @@
 #include "window.h"
-
+#include "xmldown.h"
 #include <QtGui>
 #include <iostream>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QUrl>
 #include <QDebug>
+#include <QTextCodec>
 
 Window::Window(QWidget *parent) :
  QWidget(parent)
@@ -39,11 +40,16 @@ void Window::slotButtonClicked()
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
     QByteArray data = reply->readAll();
-    QString DataAsString = QTextCodec::codecForMib(1015)->toUnicode(data);
+   // DecoderXml(data);
    // QString dataReply(data);
-     qDebug(DataAsString.toLatin1());
+    Xmldown xml =  Xmldown(data);
+    //xml.Xmldown(data);
+
 
 }
+
+
+
 
 void Window::slotReadyRead()
 {
