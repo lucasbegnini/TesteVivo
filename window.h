@@ -1,15 +1,16 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <QtWidgets>
+
 #include <QtNetwork/QNetworkReply>
+#include <QtWidgets>
 
 class Window : public QWidget
 {
     Q_OBJECT
 public:
  explicit Window(QWidget *parent = 0);
-   QString urlText;
+   QString getUrl();
 public slots:
   void slotButtonClicked();
   void funcaoteste();

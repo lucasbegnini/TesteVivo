@@ -13,13 +13,13 @@ class Xmldown
 {
 public:
     Xmldown();
-    Xmldown(QByteArray datain);
+    Xmldown(QByteArray datain, QString *tempurl);
 
 private:
     //QList lista;
     QDomDocument xml;
     int qtdQualityLevels, chunks;
-    QString Type;
+    QString Type, _URL, _tempurl;
 
 };
 

@@ -13,6 +13,7 @@ Window::Window(QWidget *parent) :
 {
     bool ok;
     inputDialog = new QInputDialog(this);
+    //qDebug() <<"criou a janela";
     inputDialog->setOptions(QInputDialog::NoButtons);
 
     *inputText =  inputDialog->getText(NULL ,"Insert the Manifest adress Example",
@@ -29,8 +30,8 @@ void Window::funcaoteste()
 }
 void Window::slotButtonClicked()
 {
-     urlText = *inputText;
-        qDebug() << urlText;
+     QString urlText = *inputText;
+       // qDebug() << urlText;
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QNetworkRequest request;
     request.setUrl(QUrl(urlText.trimmed() + "/Manifest"));
@@ -40,9 +41,10 @@ void Window::slotButtonClicked()
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
     QByteArray data = reply->readAll();
+    reply->deleteLater();
    // DecoderXml(data);
    // QString dataReply(data);
-    Xmldown xml =  Xmldown(data);
+    Xmldown xml =  Xmldown(data, inputText);
     //xml.Xmldown(data);
 
 
