@@ -4,6 +4,13 @@
 
 #include <QtNetwork/QNetworkReply>
 #include <QtWidgets>
+#include <QtGui>
+#include <iostream>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QUrl>
+#include <QDebug>
+#include <QTextCodec>
 
 class Window : public QWidget
 {
@@ -13,8 +20,6 @@ public:
    QString getUrl();
 public slots:
   void slotButtonClicked();
-  void funcaoteste();
-  void slotReadyRead();
 
 private:
  int m_counter;
