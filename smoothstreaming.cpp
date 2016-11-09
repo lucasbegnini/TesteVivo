@@ -64,11 +64,13 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
          Finalurl.replace("{start time}",s);
         }
         request.setUrl(QUrl(Finalurl));
+        TimeEspecific.start();
         QNetworkReply *reply = manager->get(request);
         TimeEspecific.start();
         QEventLoop loop;
         connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
         loop.exec();
+         _downloadtime->setText("Dowload Time :" +  QString::number(TimeEspecific.elapsed()) + " ms");
          _downloadrate->setText("Dowload Rate :" + QString::number(((reply->readAll().size())/(TimerGeneral.elapsed()))) + " Kb/s");
         data = data + reply->readAll();
         qDebug() << i;
@@ -104,10 +106,12 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
               Finalurl.replace("{start time}",s);
              }
              request.setUrl(QUrl(Finalurl));
+             TimeEspecific.start();
              QNetworkReply *reply = manager->get(request);
              QEventLoop loop;
              connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
              loop.exec();
+             _downloadtime->setText("Dowload Time :" +  QString::number(TimeEspecific.elapsed()) + " ms");
              _downloadrate->setText("Dowload Rate :" + QString::number(((reply->readAll().size())/(TimerGeneral.elapsed()))) + " Kb/s");
              data = data + reply->readAll();
               qDebug() << i;
