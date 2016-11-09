@@ -35,7 +35,8 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
     progressBar->setValue(0);
     progressBar->setGeometry(10, 10, 380, 30);
     m_button = new QPushButton("Close", &window);
-    m_button->setGeometry(10, 140, 80, 30);
+    m_button->setGeometry(150, 140, 80, 30);
+    m_button->setEnabled(false);
     QLabel *_downloadrate = new QLabel("Dowload Rate :",&window);
     _downloadrate->setGeometry(10,50,200,30);
     QLabel *_downloadtime = new QLabel("Dowload Time :",&window);
@@ -125,9 +126,11 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
             file2.close();
             qDebug() << "Done Baixa Qualidade :" << nMiliBaixa/1000 << " em segundos ";
             _downloadtimeBaixa->setText("Download in Low : " + QString::number(nMiliBaixa/1000) + "s");
+            m_button->setEnabled(true);
             QEventLoop loop;
             connect(m_button, SIGNAL(clicked()), & loop, SLOT(quit()));
             loop.exec();
+
             exit(EXIT_SUCCESS);
 //
 }
