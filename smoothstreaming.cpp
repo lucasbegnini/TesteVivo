@@ -8,14 +8,6 @@ SmoothStreaming::SmoothStreaming(QWidget* parent): QWidget(parent)
 SmoothStreaming::SetTudo(QDomNodeList listchunks, QDomNodeList list, QString Type, int qtdQualityLevels, int chunks, QString _URL, QString tempurl)
 {
     Finalurl = tempurl+ "/" + _URL;
-    QDomNodeList _list = list;
-   // qDebug()<< Type;
-   // qDebug()<< qtdQualityLevels;
-   // qDebug()<< chunks;
-   // qDebug() << list.at(0).toElement().attribute("Bitrate");
-   // QString Bitrate = list.at(0).toElement().attribute("Bitrate");
-    //Finalurl.replace("bitrate",Bitrate);
-    //qDebug()<< Finalurl;
     Download(listchunks, list, chunks);
 
 
@@ -34,10 +26,33 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QNetworkRequest request;
     QByteArray data;
+//-------------------------Criação da janela de exibição --------------------------//
+
+    QWidget window;
+    window.setFixedSize(400, 180);
+    QProgressBar *progressBar = new QProgressBar(&window);
+    progressBar->setRange(0, 100);
+    progressBar->setValue(0);
+    progressBar->setGeometry(10, 10, 380, 30);
+    m_button = new QPushButton("Close", &window);
+    m_button->setGeometry(10, 140, 80, 30);
+    QLabel *_downloadrate = new QLabel("Dowload Rate :",&window);
+    _downloadrate->setGeometry(10,50,200,30);
+    QLabel *_downloadtime = new QLabel("Dowload Time :",&window);
+    _downloadtime->setGeometry(10,70,200,30);
+    QLabel *_downloadtimeAlta = new QLabel("Dowload Time in High :",&window);
+    _downloadtimeAlta->setGeometry(10,90,200,30);
+    QLabel *_downloadtimeBaixa = new QLabel("Dowload Time in Low :",&window);
+    _downloadtimeBaixa->setGeometry(10,110,200,30);
+    window.show();
+
+    //Acumulador da barrar de progresso
+    int progessBarAc = 0;
+ //-------------------------Download de todas os arquivos na versão alta--------------------------//
     //Acumulador de tempo
     int tempAc = 0;
     //Loop para baixar todos os arquivos
-     TimeAlta.start();
+     TimerGeneral.start();
     for(int i = 0; i <= 10; i++)
     {
         if(i==0)
@@ -50,20 +65,26 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
         }
         request.setUrl(QUrl(Finalurl));
         QNetworkReply *reply = manager->get(request);
+        TimeEspecific.start();
         QEventLoop loop;
         connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
         loop.exec();
+         _downloadrate->setText("Dowload Rate :" + QString::number(((reply->readAll().size())/(TimerGeneral.elapsed()))) + " Kb/s");
         data = data + reply->readAll();
-         qDebug() << i;
+        qDebug() << i;
+        progessBarAc += ((20*i)/100)*10;
+        progressBar->setValue(progessBarAc);
     }
-    float nMiliAlta = TimeAlta.elapsed();
+    float nMiliAlta = TimerGeneral.elapsed();
     //TimeAlta.
        QFile file("C:/Users/Public/AltaQualidade.mp4");
        file.open(QIODevice::WriteOnly);
        file.write(data);
        file.close();
-         qDebug() << "Done Alta Qualidade em :" << nMiliAlta/1000 << " em segundos ";
+       qDebug() << "Done Alta Qualidade em :" << nMiliAlta/1000 << " em segundos ";
+         _downloadtimeAlta->setText("Download in High : " + QString::number(nMiliAlta/1000) + "s");
 
+//-------------------------Download de todas os arquivos na versão baixa--------------------------//
          Bitrate = _list.at(8).toElement().attribute("Bitrate");
 
          Finalurl.replace("{bitrate}",Bitrate);
@@ -71,7 +92,7 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
          //Acumulador de tempo
          tempAc = 0;
          //Loop para baixar todos os arquivos
-        TimeBaixa.start();
+        TimerGeneral.start();
          for(int i = 0; i <= 10; i++)
          {
              if(i==0)
@@ -87,27 +108,24 @@ void SmoothStreaming::Download(QDomNodeList listchunks, QDomNodeList _list, int 
              QEventLoop loop;
              connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
              loop.exec();
+             _downloadrate->setText("Dowload Rate :" + QString::number(((reply->readAll().size())/(TimerGeneral.elapsed()))) + " Kb/s");
              data = data + reply->readAll();
               qDebug() << i;
+              progessBarAc += ((20*i)/100)*10;
+              progressBar->setValue(progessBarAc);
          }
-         float nMiliBaixa = TimeBaixa.elapsed();
+         float nMiliBaixa = TimerGeneral.elapsed();
             QFile file2("C:/Users/Public/BaixaQualidade.mp4");
             file2.open(QIODevice::WriteOnly);
             file2.write(data);
             file2.close();
-              qDebug() << "Done Baixa Qualidade :" << nMiliBaixa/1000 << " em segundos ";
-            //quit();
-            //return false;
-              exit(EXIT_FAILURE);
+            qDebug() << "Done Baixa Qualidade :" << nMiliBaixa/1000 << " em segundos ";
+            _downloadtimeBaixa->setText("Download in Low : " + QString::number(nMiliBaixa/1000) + "s");
+            QEventLoop loop;
+            connect(m_button, SIGNAL(clicked()), & loop, SLOT(quit()));
+            loop.exec();
+            exit(EXIT_SUCCESS);
+//
 }
 
-void SmoothStreaming::requestReceived(QNetworkReply * reply)
-{
 
-    reply->deleteLater();
-      qDebug() << "Finalurl";
-     if(reply->error() == QNetworkReply::NoError)
-     {
-
-     }
-}

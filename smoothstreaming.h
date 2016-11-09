@@ -13,6 +13,10 @@
 #include <QtWidgets>
 #include <QFile>
 #include <QTime>
+#include <QApplication>
+#include <QProgressBar>
+#include <QSlider>
+#include <QPushButton>
 
 class SmoothStreaming : public QWidget
 {
@@ -23,11 +27,11 @@ public:
 
 public slots:
   void Download(QDomNodeList listchunks, QDomNodeList _list, int chunks);
-  void requestReceived(QNetworkReply*reply);
 
 private:
     QString  Finalurl;
-    QTime TimeAlta, TimeBaixa;
+    QTime TimerGeneral, TimeEspecific;
+    QPushButton *m_button;
 };
 
 #endif // SMOOTHSTREAMING_H
